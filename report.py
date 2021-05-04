@@ -113,7 +113,7 @@ while(True):
         latency=[]
 
     # submit a job to API that logs to logDNA
-    result = subprocess.run(['curl', '-s', '150.238.252.215:31001/25'], stdout=subprocess.PIPE)
+    result = subprocess.run(['curl', '-s', '150.238.252.215:31001/50'], stdout=subprocess.PIPE)
     jobText=result.stdout.decode('utf-8')
     print(jobText)
     jobNo=jobText.split(":",1)[1][:-1]
