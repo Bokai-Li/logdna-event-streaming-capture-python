@@ -27,11 +27,11 @@ table=[["Job ID","found", "total", "avg latency", "max latency", "min latency"]]
 latency=[]
 pattern1 = "INFO Message timestamp: ts\((.*?)\),"
 pattern2 = "\.ts\((.*?)\) JOB"
-i = 0
+i = -1
 while(True):
     i+=1
     #report summary and reset
-    if(i%4==0):
+    if(i%480==0):
         missing=[]
         with open("report.txt","r") as fp:
             for line in fp:
@@ -50,7 +50,7 @@ while(True):
             count=0
             entry=[jobNo]
             latency=[]
-            while(alertNo<=25):
+            while(alertNo<=50):
                 id = jobNo+"NO"+str(alertNo)+"End"
                 with open("total.log","r") as fp:
                     for line in fp:
@@ -61,11 +61,11 @@ while(True):
                             latency.append(int(ts1)-int(ts2))
                             count+=1
                 alertNo+=1
-                if count==25:
+                if count==50:
                     print("found"+jobNo)
                     foundArray.append(jobNo)
             entry.append(str(count))
-            entry.append("/25")
+            entry.append("/50")
             entry.append(avg(latency))
             entry.append(cmax(latency))
             entry.append(cmin(latency))
@@ -102,8 +102,8 @@ while(True):
         with open('summary.txt', 'w') as f:
             f.write(tabulate(summary))
         #reset
-        os.rename('report.txt','report'+str(i)+'.txt')
-        os.rename('missReport.txt','missReport'+str(i)+'.txt')
+        os.rename('report.txt','report'+str(i/480)+'.txt')
+        os.rename('missReport.txt','missReport'+str(i/480)+'.txt')
         os.system("kubectl delete -f kafka-java-console-sample.yaml")
         time.sleep(10)
         os.system("kubectl create -f kafka-java-console-sample.yaml")
@@ -126,7 +126,7 @@ while(True):
     count=0
     entry=["JOB"+str(jobNo)]
     latency=[]
-    while(alertNo<=25):
+    while(alertNo<=50):
         id = "JOB"+str(jobNo)+"NO"+str(alertNo)+"End"
         with open("app.log","r") as fp:
             for line in fp:
@@ -141,7 +141,7 @@ while(True):
             found=True
         alertNo+=1
     entry.append(str(count))
-    entry.append("/25")
+    entry.append("/50")
     entry.append(avg(latency))
     entry.append(cmax(latency))
     entry.append(cmin(latency))
